@@ -1,21 +1,24 @@
 .legend {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 14px;
+  display: grid;
+  gap: 6px;
   padding: 10px 4px 0;
   font-size: 12px;
   color: var(--ink-2);
 }
-.legend__item {
+.legend__group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+}
+.legend__item,
+.legend__keep {
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
-.legend__sep {
-  width: 1px;
-  height: 16px;
-  background: var(--line-strong);
+.legend__keep {
+  gap: 10px;
 }
 .legend__cells {
   display: inline-flex;
@@ -24,4 +27,14 @@
 }
 .legend .cell {
   animation: none;
+}
+.legend__ring {
+  fill: var(--surface);
+  stroke-width: 2.5;
+}
+.legend__ring--vote {
+  stroke: var(--candidate);
+}
+.legend__ring--append {
+  stroke: var(--leader);
 }

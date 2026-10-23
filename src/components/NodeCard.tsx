@@ -15,6 +15,8 @@ export interface NodeCardProps {
   highlighted: boolean;
   /** seq of this node's latest became_leader event still being celebrated. */
   leaderFlash: number | null;
+  /** seq of this node's latest term change (became_candidate / term_advanced), while fresh. */
+  termFlash: number | null;
   onKill: (id: NodeId) => void;
   onRevive: (id: NodeId) => void;
   onForceTimeout: (id: NodeId) => void;
@@ -24,7 +26,7 @@ const MAX_CELLS = 12;
 const MAX_KEYS = 4;
 
 export function NodeCard(props: NodeCardProps) {
-  const { node, center, side, highlighted, leaderFlash } = props;
+  const { node, center, side, highlighted, leaderFlash, termFlash } = props;
   const roleLabel = !node.alive ? 'Down' : node.role === 'leader' ? 'Leader' : node.role === 'candidate' ? 'Candidate' : 'Follower';
 
   return (
@@ -48,7 +50,8 @@ export function NodeCard(props: NodeCardProps) {
         {side && <span className={`node__side node__side--${side}`}>side {side}</span>}
         <span className="node__term" title="currentTerm">
           <span className="eyebrow">term</span>
-          <b key={node.currentTerm} className="mono">
+          {/* Pops only when the engine reports a term change, not on mount or restart. */}
+          <b key={termFlash ?? 'steady'} className={termFlash !== null ? 'mono is-bumped' : 'mono'}>
             {node.currentTerm}
           </b>
         </span>
@@ -118,7 +121,7 @@ function Timer({ node, heartbeatInterval }: { node: NodeSnapshot; heartbeatInter
 function Meta({ node, majority }: { node: NodeSnapshot; majority: number }) {
   if (node.alive && node.role === 'leader' && node.matchIndex) {
     return (
-      <div className="node__meta" title="matchIndex: highest entry known replicated on each follower">
+      <div className="node__meta node__meta--match" title="matchIndex: highest entry known replicated on each follower">
         <span className="eyebrow">match</span>
         {Object.entries(node.matchIndex).map(([peer, m]) => (
           <span key={peer} className="mono">
@@ -132,10 +135,10 @@ function Meta({ node, majority }: { node: NodeSnapshot; majority: number }) {
     return (
       <div className="node__meta">
         <span className="eyebrow">votes</span>
-        <b className="mono">
-          {node.votesReceived.length}/{majority}
-        </b>
-        <span className="mono muted">needed · from {node.votesReceived.map((v) => `S${v}`).join(' ')}</span>
+        <b className="mono">{node.votesReceived.length}</b>
+        <span className="muted">
+          of {majority} needed · from {node.votesReceived.map((v) => `S${v}`).join(' ')}
+        </span>
       </div>
     );
   }

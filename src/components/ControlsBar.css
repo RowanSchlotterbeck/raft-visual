@@ -6,6 +6,7 @@
 
 .ctl {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
   padding: 7px 10px;
@@ -35,6 +36,10 @@
 .ctl__speed input {
   width: 96px;
   accent-color: var(--ink);
+}
+.input[aria-invalid='true'] {
+  border-color: var(--bad);
+  outline-color: var(--bad);
 }
 .ctl__value {
   min-width: 34px;

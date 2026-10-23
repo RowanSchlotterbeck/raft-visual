@@ -27,9 +27,13 @@ export function ClusterStage() {
   }, []);
   const scale = Math.min(1, available / layout.width);
 
-  // The newest became_leader effect per node drives that card's one-shot burst.
+  // The newest leader / term effect per node drives that card's one-shot animations.
   const leaderFlash = new Map<number, number>();
-  for (const fx of effects) if (fx.kind === 'leader') leaderFlash.set(fx.node, fx.seq);
+  const termFlash = new Map<number, number>();
+  for (const fx of effects) {
+    if (fx.kind === 'leader') leaderFlash.set(fx.node, fx.seq);
+    else if (fx.kind === 'term') termFlash.set(fx.node, fx.seq);
+  }
 
   return (
     <div className="stage-wrap" data-tour="stage" ref={wrapRef} style={{ height: layout.height * scale }}>
@@ -52,6 +56,7 @@ export function ClusterStage() {
             side={sideB.length === 0 ? null : sideB.includes(node.id) ? 'B' : 'A'}
             highlighted={highlighted.includes(node.id)}
             leaderFlash={leaderFlash.get(node.id) ?? null}
+            termFlash={termFlash.get(node.id) ?? null}
             onKill={(id) => sim.kill(id)}
             onRevive={(id) => sim.revive(id)}
             onForceTimeout={(id) => sim.forceTimeout(id)}

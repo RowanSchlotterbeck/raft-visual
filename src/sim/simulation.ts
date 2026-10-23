@@ -41,6 +41,8 @@ export const DEFAULT_SPEED = 8;
 const LOG_LIMIT = 1500;
 /** Short-lived visual effects (vote marks, drop bursts) live this long, in ms. */
 export const EFFECT_MS = 1600;
+/** Notices (e.g. "write accepted") dismiss themselves after this long, in ms. */
+const NOTICE_MS = 4500;
 
 export type Effect =
   | {
@@ -53,12 +55,16 @@ export type Effect =
       reason?: VoteDenialReason;
     }
   | { id: string; kind: 'drop'; at: number; message: NetworkMessage; reason: DropReason }
-  | { id: string; kind: 'leader'; at: number; node: NodeId; seq: number };
+  | { id: string; kind: 'leader'; at: number; node: NodeId; seq: number }
+  /** The node's term went up (it started an election or adopted a newer term). */
+  | { id: string; kind: 'term'; at: number; node: NodeId; seq: number };
 
 export interface Notice {
   id: number;
   tone: 'info' | 'warn';
   text: string;
+  /** performance.now() when shown; used to expire it. */
+  at: number;
 }
 
 export interface SimView {
@@ -99,6 +105,8 @@ export class Simulation {
   private progress = 0;
   private lastFrame: number | null = null;
   private rafHandle: number | null = null;
+  /** True between start() and stop() (while the provider is mounted). */
+  private mounted = false;
 
   private view!: SimView;
   private readonly listeners = new Set<() => void>();
@@ -133,14 +141,29 @@ export class Simulation {
   // ----- the clock ----------------------------------------------------------
 
   start(): void {
-    if (this.rafHandle !== null) return;
+    this.mounted = true;
+    this.wake();
+  }
+
+  stop(): void {
+    this.mounted = false;
+    if (this.rafHandle !== null) cancelAnimationFrame(this.rafHandle);
+    this.rafHandle = null;
+  }
+
+  /**
+   * The frame loop only runs while something changes over real time:
+   * the clock is playing, or an effect or notice is waiting to expire.
+   * Anything that starts one of those calls wake().
+   */
+  private wake(): void {
+    if (!this.mounted || this.rafHandle !== null) return;
     this.lastFrame = null;
     this.rafHandle = requestAnimationFrame(this.frame);
   }
 
-  stop(): void {
-    if (this.rafHandle !== null) cancelAnimationFrame(this.rafHandle);
-    this.rafHandle = null;
+  private needsFrames(): boolean {
+    return this.playing || this.effects.length > 0 || this.notice !== null;
   }
 
   private frame = (now: number): void => {
@@ -161,13 +184,21 @@ export class Simulation {
       this.frameListeners.forEach((l) => l());
     }
 
-    if (this.pruneEffects(now)) this.publish();
-    this.rafHandle = requestAnimationFrame(this.frame);
+    const expired = this.pruneEffects(now) || this.expireNotice(now);
+    if (expired) this.publish();
+
+    if (this.needsFrames()) {
+      this.rafHandle = requestAnimationFrame(this.frame);
+    } else {
+      this.rafHandle = null;
+      this.lastFrame = null;
+    }
   };
 
   play(): void {
     this.playing = true;
     this.publish();
+    this.wake();
   }
 
   pause(): void {
@@ -266,7 +297,14 @@ export class Simulation {
   }
 
   private setNotice(tone: Notice['tone'], text: string): void {
-    this.notice = { id: ++this.noticeId, tone, text };
+    this.notice = { id: ++this.noticeId, tone, text, at: performance.now() };
+    this.wake();
+  }
+
+  private expireNotice(now: number): boolean {
+    if (this.notice === null || now - this.notice.at < NOTICE_MS) return false;
+    this.notice = null;
+    return true;
   }
 
   // ----- syncing engine -> view ---------------------------------------------
@@ -298,10 +336,13 @@ export class Simulation {
         this.effects.push({ id: `d${e.seq}`, kind: 'drop', at: now, message: e.message, reason: e.reason });
       } else if (e.type === 'became_leader') {
         this.effects.push({ id: `l${e.seq}`, kind: 'leader', at: now, node: e.node, seq: e.seq });
+      } else if (e.type === 'became_candidate' || e.type === 'term_advanced') {
+        this.effects.push({ id: `t${e.seq}`, kind: 'term', at: now, node: e.node, seq: e.seq });
       }
     }
     this.pruneEffects(now);
     this.publish(snapshot);
+    if (this.effects.length > 0) this.wake();
   }
 
   private pruneEffects(now: number): boolean {

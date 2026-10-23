@@ -102,8 +102,8 @@ function MessageDot({ rpc, at }: { rpc: Rpc; at: Point }) {
         </g>
       );
     case 'RequestVoteReply':
-      return <circle className={`msg msg--reply msg--vote-reply ${rpc.voteGranted ? 'is-yes' : 'is-no'}`} transform={tr} r={5} />;
+      return <circle className={`msg msg--reply msg--vote-reply ${rpc.voteGranted ? 'is-yes' : 'is-no'}`} transform={tr} r={5.5} />;
     case 'AppendEntriesReply':
-      return <circle className={`msg msg--reply msg--ae-reply ${rpc.success ? 'is-yes' : 'is-no'}`} transform={tr} r={5} />;
+      return <circle className={`msg msg--reply msg--ae-reply ${rpc.success ? 'is-yes' : 'is-no'}`} transform={tr} r={5.5} />;
   }
 }

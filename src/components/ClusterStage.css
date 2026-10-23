@@ -63,8 +63,9 @@
 .msg--ae {
   fill: var(--leader);
 }
+/* Replies: the fill (yes / no) is the main signal, the thin ring says which RPC. */
 .msg--reply {
-  stroke-width: 2.5;
+  stroke-width: 1.75;
 }
 .msg--reply.is-yes {
   fill: var(--ok);

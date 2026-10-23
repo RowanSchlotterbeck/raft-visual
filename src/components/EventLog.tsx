@@ -26,8 +26,9 @@ function category(e: RaftEvent): Category {
       return 'commit';
     case 'message_sent':
     case 'message_delivered':
-    case 'message_dropped':
       return 'network';
+    // A lost message is shown even when routine traffic is filtered out.
+    case 'message_dropped':
     case 'node_killed':
     case 'node_revived':
     case 'partition_changed':
@@ -87,7 +88,7 @@ export function EventLog() {
         <h2>Event log</h2>
         <label className="toggle">
           <input type="checkbox" checked={showNetwork} onChange={(e) => setShowNetwork(e.target.checked)} />
-          messages
+          sent / delivered
         </label>
         <label className="toggle">
           <input type="checkbox" checked={showHeartbeats} onChange={(e) => setShowHeartbeats(e.target.checked)} />

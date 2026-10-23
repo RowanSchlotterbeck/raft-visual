@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { MAX_NODES, type NodeId } from '../engine';
 import { useCluster } from '../sim/hooks';
+import { writeRunToUrl } from '../sim/url';
 import { SPEEDS } from '../sim/simulation';
 import { PauseIcon, PlayIcon, StepIcon } from './icons';
 import './ControlsBar.css';
 
 const KEYS = ['x', 'y', 'z'] as const;
+const SEED_HINT = 'The seed must be a whole number, 1 or more';
 
 /** The raw levers: clock, run setup, client writes, and the network split. */
 export function ControlsBar() {
@@ -58,11 +60,7 @@ function RunSetup() {
   const restart = (seed: number, nodeCount: number) => {
     sim.restart(seed, nodeCount);
     setSeedText(String(seed));
-    // Make the run shareable: ?seed=42&n=5 reproduces it.
-    const url = new URL(window.location.href);
-    url.searchParams.set('seed', String(seed));
-    url.searchParams.set('n', String(nodeCount));
-    window.history.replaceState(null, '', url);
+    writeRunToUrl(seed, nodeCount);
   };
   const parsedSeed = Number(seedText);
   const seedValid = Number.isInteger(parsedSeed) && parsedSeed > 0;
@@ -80,6 +78,7 @@ function RunSetup() {
           onKeyDown={(e) => e.key === 'Enter' && seedValid && restart(parsedSeed, view.nodeCount)}
           style={{ width: 64 }}
           aria-invalid={!seedValid}
+          title={seedValid ? 'Same seed + same actions = same run' : SEED_HINT}
         />
       </label>
       <label className="ctl__field">
@@ -96,7 +95,12 @@ function RunSetup() {
           ))}
         </select>
       </label>
-      <button className="btn" disabled={!seedValid} onClick={() => restart(parsedSeed, view.nodeCount)}>
+      <button
+        className="btn"
+        disabled={!seedValid}
+        title={seedValid ? 'Start a fresh cluster with this seed' : SEED_HINT}
+        onClick={() => restart(parsedSeed, view.nodeCount)}
+      >
         Restart
       </button>
     </section>

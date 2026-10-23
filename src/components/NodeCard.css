@@ -159,6 +159,8 @@
   display: inline-block;
   font-size: 17px;
   line-height: 1;
+}
+.node__term b.is-bumped {
   animation: term-pop 0.6s ease-out;
 }
 @keyframes term-pop {
@@ -219,6 +221,15 @@
 }
 .node__meta .eyebrow + .mono {
   margin-right: 6px;
+}
+/* A leader of 7 lists 6 followers: wrap to a second line rather than clip. */
+.node__meta--match {
+  flex-wrap: wrap;
+  row-gap: 1px;
+  column-gap: 5px;
+  font-size: 11px;
+  white-space: normal;
+  overflow: visible;
 }
 .muted {
   color: var(--ink-3);
