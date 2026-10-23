@@ -1,0 +1,39 @@
+.safety {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px 7px 10px;
+  border-radius: 12px;
+  border: 1px solid;
+  max-width: 520px;
+}
+.safety > svg {
+  flex: none;
+  width: 22px;
+  height: 22px;
+}
+.safety strong {
+  display: block;
+  font-size: 13px;
+}
+.safety__detail {
+  display: block;
+  font-size: 11px;
+  color: var(--ink-2);
+}
+
+.safety.is-ok {
+  border-color: color-mix(in srgb, var(--ok) 40%, transparent);
+  background: color-mix(in srgb, var(--ok) 9%, var(--surface));
+}
+.safety.is-ok > svg {
+  color: var(--ok);
+}
+
+.safety.is-broken {
+  border-color: var(--bad);
+  background: color-mix(in srgb, var(--bad) 14%, var(--surface));
+}
+.safety.is-broken > svg {
+  color: var(--bad);
+}

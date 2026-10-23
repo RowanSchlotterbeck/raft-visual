@@ -1,0 +1,84 @@
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ctl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.ctl > .eyebrow {
+  margin-right: 2px;
+}
+
+.ctl__field {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+.ctl__speed {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 4px;
+}
+.ctl__speed input {
+  width: 96px;
+  accent-color: var(--ink);
+}
+.ctl__value {
+  min-width: 34px;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+.ctl__clock {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding-left: 10px;
+  border-left: 1px solid var(--line);
+}
+.ctl__clock .mono {
+  font-size: 18px;
+  font-weight: 650;
+  min-width: 44px;
+}
+
+.chips {
+  display: flex;
+  gap: 4px;
+}
+.chip {
+  height: 26px;
+  min-width: 36px;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.chip:hover:not(:disabled) {
+  border-color: var(--side-b);
+}
+.chip[aria-pressed='true'] {
+  background: var(--side-b);
+  border-color: var(--side-b);
+  color: #fff;
+}
+.chip:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

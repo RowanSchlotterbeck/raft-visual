@@ -1,35 +1,66 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect } from 'react';
+import { ClientRequests } from './components/ClientRequests';
+import { ClusterStage } from './components/ClusterStage';
+import { ControlsBar } from './components/ControlsBar';
+import { EventLog } from './components/EventLog';
+import { Legend } from './components/Legend';
+import { SafetyBanner } from './components/SafetyBanner';
+import { useCluster } from './sim/hooks';
+import { SimulationProvider } from './sim/SimulationProvider';
+import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <SimulationProvider>
+      <Shell />
+    </SimulationProvider>
+  );
 }
 
-export default App
+function Shell() {
+  useKeyboardShortcuts();
+  return (
+    <div className="app">
+      <header className="topbar">
+        <div className="brand">
+          <h1>Raft, live</h1>
+          <p>A deterministic Raft cluster in your browser. Every moving dot is a real RPC.</p>
+        </div>
+        <SafetyBanner />
+      </header>
+      <ControlsBar />
+      <main className="main">
+        <div className="canvas">
+          <ClusterStage />
+          <Legend />
+        </div>
+        <aside className="sidebar">
+          <div className="sidebar__inner">
+            <ClientRequests />
+            <EventLog />
+          </div>
+        </aside>
+      </main>
+    </div>
+  );
+}
+
+/** Space: play/pause. Right arrow: step one tick. Ignored while typing. */
+function useKeyboardShortcuts() {
+  const { sim } = useCluster();
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const el = e.target as HTMLElement;
+      if (el.closest('input, select, textarea, button') || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === ' ') {
+        e.preventDefault();
+        sim.togglePlay();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        sim.step();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [sim]);
+}

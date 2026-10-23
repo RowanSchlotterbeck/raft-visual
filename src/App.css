@@ -1,42 +1,68 @@
-#root {
-  max-width: 1280px;
+.app {
+  max-width: 1680px;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  padding: 18px 24px 28px;
+  display: grid;
+  gap: 14px;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+.brand h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
 }
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.brand p {
+  margin: 3px 0 0;
+  color: var(--ink-2);
+  font-size: 13.5px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 16px;
+}
+.canvas {
+  min-width: 0;
+}
+/* The sidebar takes the canvas's height (it doesn't size the row itself),
+   so the event log scrolls inside it instead of running off the page. */
+.sidebar {
+  position: relative;
+  min-height: 520px;
+}
+.sidebar__inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (max-width: 1100px) {
+  .main {
+    grid-template-columns: 1fr;
   }
-  to {
-    transform: rotate(360deg);
+  .sidebar {
+    min-height: 560px;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+@media (max-width: 640px) {
+  .app {
+    padding: 14px 16px 24px;
   }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+  .brand h1 {
+    font-size: 24px;
+  }
 }
