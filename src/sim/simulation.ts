@@ -12,7 +12,6 @@
  */
 import {
   createCluster,
-  SafetyMonitor,
   type ClusterOptions,
   type ClusterSnapshot,
   type Command,
@@ -21,7 +20,6 @@ import {
   type NodeId,
   type RaftCluster,
   type RaftEvent,
-  type SafetyViolation,
   type VoteDenialReason,
 } from '../engine';
 
@@ -68,7 +66,6 @@ export interface SimView {
   /** Most recent events, oldest first. */
   readonly log: readonly RaftEvent[];
   readonly effects: readonly Effect[];
-  readonly violations: readonly SafetyViolation[];
   readonly playing: boolean;
   readonly tps: number;
   readonly seed: number;
@@ -87,7 +84,6 @@ export interface SimInit {
 
 export class Simulation {
   private cluster!: RaftCluster;
-  private monitor!: SafetyMonitor;
   private lastSeq = 0;
   private log: RaftEvent[] = [];
   private effects: Effect[] = [];
@@ -207,7 +203,6 @@ export class Simulation {
 
   private build(): void {
     this.cluster = createCluster({ ...UI_CLUSTER_CONFIG, seed: this.seed, nodeCount: this.nodeCount });
-    this.monitor = new SafetyMonitor();
     this.lastSeq = 0;
     this.log = [];
     this.effects = [];
@@ -276,12 +271,11 @@ export class Simulation {
 
   // ----- syncing engine -> view ---------------------------------------------
 
-  /** Pull everything since the last sync, check safety, derive effects, publish. */
+  /** Pull everything since the last sync, derive effects, publish. */
   private sync(): void {
     const events = this.cluster.getEvents(this.lastSeq);
     if (events.length > 0) this.lastSeq = events[events.length - 1].seq;
     const snapshot = this.cluster.getState();
-    this.monitor.observe(events, snapshot);
 
     if (events.length > 0) {
       this.log = this.log.concat(events);
@@ -322,7 +316,6 @@ export class Simulation {
       snapshot,
       log: this.log,
       effects: [...this.effects],
-      violations: [...this.monitor.violations],
       playing: this.playing,
       tps: this.tps,
       seed: this.seed,

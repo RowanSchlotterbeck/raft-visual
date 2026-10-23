@@ -49,18 +49,3 @@ export const StepIcon = () => (
     <rect x="16" y="5" width="3" height="14" rx="1" />
   </svg>
 );
-
-export const ShieldIcon = () => (
-  <svg {...base}>
-    <path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z" />
-    <path d="M8.5 12l2.5 2.5 4.5-5" />
-  </svg>
-);
-
-export const AlertIcon = () => (
-  <svg {...base}>
-    <path d="M12 3l10 18H2z" />
-    <path d="M12 10v5" />
-    <path d="M12 18h.01" />
-  </svg>
-);

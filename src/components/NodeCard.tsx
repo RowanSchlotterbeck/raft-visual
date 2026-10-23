@@ -30,6 +30,7 @@ export function NodeCard(props: NodeCardProps) {
   return (
     <article
       className="node"
+      data-tour="node"
       data-role={node.alive ? node.role : 'dead'}
       data-side={side ?? undefined}
       data-highlight={highlighted || undefined}
@@ -85,7 +86,7 @@ export function NodeCard(props: NodeCardProps) {
 function Timer({ node, heartbeatInterval }: { node: NodeSnapshot; heartbeatInterval: number }) {
   if (!node.alive) {
     return (
-      <div className="timer is-off">
+      <div className="timer is-off" data-tour="timer">
         <div className="timer__label">
           <span>crashed: no timers</span>
         </div>
@@ -99,7 +100,7 @@ function Timer({ node, heartbeatInterval }: { node: NodeSnapshot; heartbeatInter
   const frac = Math.min(1, elapsed / total);
   const hot = !isLeader && frac >= 0.75;
   return (
-    <div className={`timer${isLeader ? ' is-leader' : ''}${hot ? ' is-hot' : ''}`}>
+    <div className={`timer${isLeader ? ' is-leader' : ''}${hot ? ' is-hot' : ''}`} data-tour="timer">
       <div className="timer__label">
         <span>{isLeader ? 'next heartbeat' : 'election timeout'}</span>
         <span className="mono">
@@ -157,7 +158,7 @@ function LogStrip({ node }: { node: NodeSnapshot }) {
   const visible = node.log.slice(-MAX_CELLS);
   const hidden = node.log.length - visible.length;
   return (
-    <div className="node__log">
+    <div className="node__log" data-tour="log">
       <div className="node__log-head">
         <span className="eyebrow">log</span>
         <span className="mono muted">

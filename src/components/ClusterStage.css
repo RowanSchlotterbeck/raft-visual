@@ -53,18 +53,6 @@
 
 /* ----- messages ----- */
 
-.trail {
-  stroke-width: 3;
-  stroke-linecap: round;
-  opacity: 0.28;
-}
-.trail--vote {
-  stroke: var(--candidate);
-}
-.trail--append {
-  stroke: var(--leader);
-}
-
 .msg {
   stroke: var(--surface);
   stroke-width: 1.5;
@@ -75,18 +63,20 @@
 .msg--ae {
   fill: var(--leader);
 }
-.msg--heartbeat {
-  fill: var(--surface);
-  stroke: var(--leader);
+.msg--reply {
   stroke-width: 2.5;
 }
 .msg--reply.is-yes {
   fill: var(--ok);
 }
 .msg--reply.is-no {
-  fill: var(--surface);
-  stroke: var(--bad);
-  stroke-width: 2.2;
+  fill: var(--bad);
+}
+.msg--vote-reply {
+  stroke: var(--candidate);
+}
+.msg--ae-reply {
+  stroke: var(--leader);
 }
 .msg__count {
   fill: #fff;

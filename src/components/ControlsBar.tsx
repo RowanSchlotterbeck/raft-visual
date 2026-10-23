@@ -23,7 +23,7 @@ function Transport() {
   const { view, sim } = useCluster();
   const speedIndex = Math.max(0, SPEEDS.findIndex((s) => s === view.tps));
   return (
-    <section className="ctl">
+    <section className="ctl" data-tour="transport">
       <button className="btn btn--primary" onClick={() => sim.togglePlay()} title="Play / pause (space)">
         {view.playing ? <PauseIcon /> : <PlayIcon />}
         {view.playing ? 'Pause' : 'Play'}
@@ -111,7 +111,7 @@ function ClientWrite() {
   const via = target === 'leader' || !ids.includes(Number(target)) ? undefined : Number(target);
 
   return (
-    <section className="ctl">
+    <section className="ctl" data-tour="levers">
       <span className="eyebrow">client</span>
       <label className="ctl__field">
         <span>set</span>
@@ -148,7 +148,7 @@ function PartitionControl() {
     sim.setSideB(next);
   };
   return (
-    <section className="ctl" aria-label="Network partition">
+    <section className="ctl" data-tour="levers" aria-label="Network partition">
       <span className="eyebrow">split network</span>
       <div className="chips">
         {ids.map((id) => (

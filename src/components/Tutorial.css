@@ -1,0 +1,91 @@
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+}
+
+/* The spotlight: a transparent box whose huge shadow dims everything else. */
+.tour__hole {
+  position: fixed;
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 2px var(--leader),
+    0 0 0 200vmax rgb(8 10 14 / 0.58);
+  transition:
+    top 0.3s ease,
+    left 0.3s ease,
+    width 0.3s ease,
+    height 0.3s ease;
+  pointer-events: none;
+}
+.tour__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgb(8 10 14 / 0.58);
+}
+
+.tour__card {
+  position: fixed;
+  width: min(360px, calc(100vw - 32px));
+  padding: 16px 16px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 24px 60px -12px rgb(0 0 0 / 0.45);
+  transition:
+    top 0.3s ease,
+    left 0.3s ease;
+}
+.tour__card h2 {
+  margin: 8px 0 6px;
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 1.2;
+}
+.tour__card p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.tour__progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.tour__dots {
+  display: inline-flex;
+  gap: 5px;
+}
+.tour__dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--line-strong);
+}
+.tour__dots .is-done {
+  background: var(--ink-3);
+}
+.tour__dots .is-current {
+  width: 16px;
+  border-radius: 3px;
+  background: var(--leader);
+}
+
+.tour__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+.tour__spacer {
+  flex: 1;
+}
+
+.btn--ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--ink-2);
+  padding: 0 6px;
+}

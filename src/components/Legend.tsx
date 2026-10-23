@@ -8,20 +8,17 @@ export function Legend() {
     <div className="legend" aria-label="Legend">
       <span className="eyebrow">messages</span>
       <Item label="RequestVote">
-        <rect className="msg msg--rv" transform="translate(9 9) rotate(45)" x={-5} y={-5} width={10} height={10} rx={2} />
+        <circle className="msg msg--rv" cx={9} cy={9} r={5.5} />
       </Item>
-      <Item label="AppendEntries (n entries)">
+      <Item label="AppendEntries (heartbeat, or n entries)">
         <circle className="msg msg--ae" cx={9} cy={9} r={7.5} />
         <text className="msg__count" x={9} y={9} dy="0.35em">
           n
         </text>
       </Item>
-      <Item label="heartbeat">
-        <circle className="msg msg--heartbeat" cx={9} cy={9} r={5} />
-      </Item>
-      <Item label="reply: yes / no">
-        <circle className="msg msg--reply is-yes" cx={5} cy={9} r={4} />
-        <circle className="msg msg--reply is-no" cx={14} cy={9} r={4} />
+      <Item label="reply: yes / no (ring: vote or append)">
+        <circle className="msg msg--reply msg--vote-reply is-yes" cx={5} cy={9} r={4} />
+        <circle className="msg msg--reply msg--ae-reply is-no" cx={14.5} cy={9} r={4} />
       </Item>
       <Item label="lost">
         <g className="cut-mark" transform="translate(9 9)">

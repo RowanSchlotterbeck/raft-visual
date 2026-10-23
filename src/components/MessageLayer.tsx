@@ -39,11 +39,9 @@ export function MessageLayer({ layout, sideB, inFlight, effects }: Props) {
           p = Math.min(p, CUT_AT);
         }
         const pos = lerp(from, to, p);
-        const tail = lerp(from, to, Math.max(0, p - 0.14));
         return (
           <g key={m.id} style={{ opacity }}>
-            <line className={`trail trail--${family(m.rpc)}`} x1={tail.x} y1={tail.y} x2={pos.x} y2={pos.y} />
-            <MessageGlyph rpc={m.rpc} at={pos} />
+            <MessageDot rpc={m.rpc} at={pos} />
           </g>
         );
       })}
@@ -81,42 +79,31 @@ export function MessageLayer({ layout, sideB, inFlight, effects }: Props) {
   );
 }
 
-const family = (rpc: Rpc) => (rpc.type === 'RequestVote' || rpc.type === 'RequestVoteReply' ? 'vote' : 'append');
-
 /**
- * Shape = RPC family (diamond: RequestVote, circle: AppendEntries).
- * Requests are big and colored by sender role; replies are small and green
- * (yes) or red (no). AppendEntries carrying entries shows how many.
+ * Every message is a circle. Fill says what it is: violet = RequestVote,
+ * amber = AppendEntries (bigger, with a count, when it carries entries),
+ * green / red = a yes / no reply. A reply's ring keeps its family: violet
+ * for a vote reply, amber for an append reply.
  */
-function MessageGlyph({ rpc, at }: { rpc: Rpc; at: Point }) {
+function MessageDot({ rpc, at }: { rpc: Rpc; at: Point }) {
   const tr = `translate(${at.x} ${at.y})`;
   switch (rpc.type) {
     case 'RequestVote':
-      return <rect className="msg msg--rv" transform={`${tr} rotate(45)`} x={-6} y={-6} width={12} height={12} rx={2} />;
-    case 'RequestVoteReply':
-      return (
-        <rect
-          className={`msg msg--reply ${rpc.voteGranted ? 'is-yes' : 'is-no'}`}
-          transform={`${tr} rotate(45)`}
-          x={-4}
-          y={-4}
-          width={8}
-          height={8}
-          rx={1.5}
-        />
-      );
+      return <circle className="msg msg--rv" transform={tr} r={6} />;
     case 'AppendEntries':
       return rpc.entries.length === 0 ? (
-        <circle className="msg msg--heartbeat" transform={tr} r={5.5} />
+        <circle className="msg msg--ae" transform={tr} r={6} />
       ) : (
         <g transform={tr}>
-          <circle className="msg msg--ae" r={9} />
+          <circle className="msg msg--ae" r={8.5} />
           <text className="msg__count" dy="0.35em">
             {rpc.entries.length}
           </text>
         </g>
       );
+    case 'RequestVoteReply':
+      return <circle className={`msg msg--reply msg--vote-reply ${rpc.voteGranted ? 'is-yes' : 'is-no'}`} transform={tr} r={5} />;
     case 'AppendEntriesReply':
-      return <circle className={`msg msg--reply ${rpc.success ? 'is-yes' : 'is-no'}`} transform={tr} r={4.5} />;
+      return <circle className={`msg msg--reply msg--ae-reply ${rpc.success ? 'is-yes' : 'is-no'}`} transform={tr} r={5} />;
   }
 }

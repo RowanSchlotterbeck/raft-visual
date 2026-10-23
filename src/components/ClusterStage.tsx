@@ -32,7 +32,7 @@ export function ClusterStage() {
   for (const fx of effects) if (fx.kind === 'leader') leaderFlash.set(fx.node, fx.seq);
 
   return (
-    <div className="stage-wrap" ref={wrapRef} style={{ height: layout.height * scale }}>
+    <div className="stage-wrap" data-tour="stage" ref={wrapRef} style={{ height: layout.height * scale }}>
       <div
         className="stage"
         style={{
