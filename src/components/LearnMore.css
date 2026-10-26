@@ -16,7 +16,6 @@
   letter-spacing: -0.01em;
 }
 .learn__intro p:not(.eyebrow) {
-  max-width: 70ch;
   margin: 0 0 10px;
   font-size: 15.5px;
   line-height: 1.6;
@@ -86,11 +85,6 @@
   font-weight: 600;
   text-underline-offset: 3px;
 }
-.learn__placeholder {
-  color: var(--ink-3);
-  font-style: italic;
-}
-
 @media (max-width: 560px) {
   .learn__how {
     grid-template-columns: 1fr;
